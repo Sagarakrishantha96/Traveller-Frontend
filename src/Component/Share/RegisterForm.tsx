@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-
-// Change the port to match your .NET API
-const API_URL = "http://localhost:5123/api/auth/register";
+import { postRegisterRequest } from "../Service/AuthService";
 
 interface RegisterFormProps {
   styles: any;
@@ -63,28 +61,23 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ styles, title, goToL
 
     setLoading(true);
     try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fullName: form.fullName,
-          email: form.email,
-          phone: form.phone || null,
-          password: form.password
-        })
+      await postRegisterRequest({
+        fullName: form.fullName,
+        email: form.email,
+        phone: form.phone || null,
+        password: form.password
       });
 
-      if (response.ok) {
-        setAlert({ type: "success", message: "Account created successfully! Redirecting to login..." });
-        setForm(emptyForm);
-        setAgree(false);
-        setTimeout(onRegisterSuccess, 1500);
-      } else {
-        const message = await response.text();
-        setAlert({ type: "error", message: message || "Registration failed. Please try again." });
-      }
-    } catch {
-      setAlert({ type: "error", message: "Cannot connect to the server. Is the API running?" });
+      setAlert({ type: "success", message: "Account created successfully! Redirecting to login..." });
+      setForm(emptyForm);
+      setAgree(false);
+      setTimeout(onRegisterSuccess, 1500);
+    } catch (error) {
+      // fetch throws a TypeError when the server can't be reached
+      const message = error instanceof TypeError
+        ? "Cannot connect to the server. Is the API running?"
+        : (error as Error).message;
+      setAlert({ type: "error", message });
     } finally {
       setLoading(false);
     }
@@ -92,7 +85,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ styles, title, goToL
 
   const inputStyle = (field: keyof RegisterData) => ({
     ...styles.input,
-    ...(errors[field] && styles.input.invalid)
+    ...(errors[field] ? styles.inputInvalid : {})
   });
 
   return (
@@ -101,7 +94,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ styles, title, goToL
       <p style={styles.subTitle}>Create an account and start planning your trips.</p>
 
       {alert && (
-        <div style={{ ...styles.alert, ...styles.alert[alert.type] }}>{alert.message}</div>
+        <div style={{ ...styles.alert, ...(alert.type === "error" ? styles.alertError : styles.alertSuccess) }}>{alert.message}</div>
       )}
 
       <div style={styles.inputGroup}>
@@ -144,13 +137,13 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ styles, title, goToL
       <div style={styles.policyWrapper}>
         <input id="agree" type="checkbox" checked={agree}
           onChange={(e) => { setAgree(e.target.checked); setErrors({ ...errors, agree: undefined }); }} />
-        <label htmlFor="agree" style={{ ...styles.policyLabel, ...(errors.agree && styles.policyLabel.invalid) }}>
+        <label htmlFor="agree" style={{ ...styles.policyLabel, ...(errors.agree ? styles.policyLabelInvalid : {}) }}>
           I agree to the Terms and Privacy Policy
         </label>
       </div>
 
       <button type="submit" disabled={loading}
-        style={{ ...styles.submitButton, ...(loading && styles.submitButton.disabled) }}>
+        style={{ ...styles.submitButton, ...(loading ? styles.submitButtonDisabled : {}) }}>
         {loading ? "Creating account..." : "Register"}
       </button>
 

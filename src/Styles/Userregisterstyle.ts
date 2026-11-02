@@ -79,11 +79,11 @@ export const userRegister = {
       border: `2px solid ${Color.LightAsh}`,
       borderRadius: "2.4vw",
       outline: "none",
-      boxSizing: "border-box" as "border-box",
-      invalid: {
-        border: `2px solid ${Color.Red}`,
-        backgroundColor: Color.LightRed
-      }
+      boxSizing: "border-box" as "border-box"
+    },
+    inputInvalid: {
+      border: `2px solid ${Color.Red}`,
+      backgroundColor: Color.LightRed
     },
     inputError: {
       color: Color.Red,
@@ -98,27 +98,27 @@ export const userRegister = {
       margin: "2vw 0 5vw 0"
     },
     policyLabel: {
-      marginLeft: "2vw",
-      invalid: {
-        color: Color.Red
-      }
+      marginLeft: "2vw"
+    },
+    policyLabelInvalid: {
+      color: Color.Red
     },
     alert: {
       padding: "3vw",
       borderRadius: "2vw",
       fontSize: "3.6vw",
       marginBottom: "4vw",
-      textAlign: "center" as "center",
-      error: {
-        color: Color.Red,
-        backgroundColor: Color.LightRed,
-        border: `1px solid ${Color.Red}`
-      },
-      success: {
-        color: Color.Green,
-        backgroundColor: Color.LightGreen,
-        border: `1px solid ${Color.Green}`
-      }
+      textAlign: "center" as "center"
+    },
+    alertError: {
+      color: Color.Red,
+      backgroundColor: Color.LightRed,
+      border: `1px solid ${Color.Red}`
+    },
+    alertSuccess: {
+      color: Color.Green,
+      backgroundColor: Color.LightGreen,
+      border: `1px solid ${Color.Green}`
     },
     submitButton: {
       width: "100%",
@@ -131,11 +131,11 @@ export const userRegister = {
       fontFamily: Font.Default,
       fontWeight: "bold" as "bold",
       textTransform: "uppercase" as "uppercase",
-      cursor: "pointer",
-      disabled: {
-        opacity: 0.6,
-        cursor: "not-allowed"
-      }
+      cursor: "pointer"
+    },
+    submitButtonDisabled: {
+      opacity: 0.6,
+      cursor: "not-allowed"
     },
     loginNowWrapper: {
       textAlign: "center" as "center",

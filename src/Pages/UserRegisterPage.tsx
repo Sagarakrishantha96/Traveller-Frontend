@@ -9,7 +9,6 @@ const MOBILE_QUERY = "(max-width: 786px)";
 export const UserRegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState<boolean>(window.matchMedia(MOBILE_QUERY).matches);
-  const [styles, setStyles] = useState<any>(getComponentStyle(userRegister, isMobile));
 
   // Watch the screen size, so the styles switch between mobile and desktop
   useEffect(() => {
@@ -19,9 +18,7 @@ export const UserRegisterPage: React.FC = () => {
     return () => media.removeEventListener("change", handleResize);
   }, []);
 
-  useEffect(() => {
-    setStyles(getComponentStyle(userRegister, isMobile));
-  }, [isMobile]);
+  const styles = getComponentStyle(userRegister, isMobile);
 
   useEffect(() => {
     document.title = "Register - Travel Planner";
@@ -29,7 +26,7 @@ export const UserRegisterPage: React.FC = () => {
     if (localStorage.getItem("token")) {
       navigate("/home");
     }
-  }, []);
+  }, [navigate]);
 
   const goToLogin = () => navigate("/login");
 
