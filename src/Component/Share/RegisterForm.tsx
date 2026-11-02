@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { postRegisterRequest } from "../Service/AuthService";
+import { postRegisterRequest } from "../../Services/AuthService";
+import { getErrorMessage } from "../Common";
 
 interface RegisterFormProps {
   styles: any;
@@ -73,11 +74,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ styles, title, goToL
       setAgree(false);
       setTimeout(onRegisterSuccess, 1500);
     } catch (error) {
-      // fetch throws a TypeError when the server can't be reached
-      const message = error instanceof TypeError
-        ? "Cannot connect to the server. Is the API running?"
-        : (error as Error).message;
-      setAlert({ type: "error", message });
+      setAlert({ type: "error", message: getErrorMessage(error, "Registration failed. Please try again.") });
     } finally {
       setLoading(false);
     }
