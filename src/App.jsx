@@ -1,14 +1,17 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { UserRegisterPage } from './Pages/UserRegisterPage'
+import { UserLoginPage } from './Pages/UserLoginPage'
+import { HomePage } from './Pages/HomePage'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/register" replace />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/register" element={<UserRegisterPage />} />
-        {/* TODO: add /login and /home pages */}
-        <Route path="*" element={<Navigate to="/register" replace />} />
+        <Route path="/login" element={<UserLoginPage />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   )
