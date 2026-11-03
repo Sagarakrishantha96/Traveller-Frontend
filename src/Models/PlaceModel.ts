@@ -5,4 +5,6 @@ export interface PlaceModel {
   district: string | null;
   latitude: number;
   longitude: number;
+  imageUrl: string | null;      // photo of the place's best-rated attraction
+  attractionCount: number;
 }
