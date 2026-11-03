@@ -5,6 +5,11 @@ export function getHost(): string {
   return "https://localhost:51453/";
 }
 
+// Shows an amount in Sri Lankan rupees, e.g. "LKR 12,500"
+export function formatPrice(amount: number): string {
+  return "LKR " + amount.toLocaleString("en-LK", { maximumFractionDigits: 0 });
+}
+
 // Turns an API error into a message the user can read
 export function getErrorMessage(error: unknown, fallback: string): string {
   if (axios.isAxiosError(error)) {
