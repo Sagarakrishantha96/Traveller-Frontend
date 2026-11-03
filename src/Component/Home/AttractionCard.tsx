@@ -1,5 +1,6 @@
 import React from "react";
 import { AttractionModel } from "../../Models/AttractionModel";
+import { PlaceImage } from "../Share/PlaceImage";
 import { formatPrice } from "../Common";
 
 interface AttractionCardProps {
@@ -14,20 +15,22 @@ export const AttractionCard: React.FC<AttractionCardProps> = ({ styles, attracti
 
   return (
     <div style={styles.card}>
-      <div style={styles.cardHeader}>
-        <h3 style={styles.cardTitle}>{attraction.name}</h3>
-        <span style={styles.badge}>{attraction.category}</span>
+      <div style={styles.cardImageWrapper}>
+        <PlaceImage src={attraction.imageUrl} alt={attraction.name} kind={attraction.category} style={styles.cardImage} />
+        <span style={styles.cardImageBadge}>{attraction.category}</span>
+        {attraction.rating !== null && <span style={styles.cardImageRating}>★ {attraction.rating}</span>}
       </div>
-      <p style={styles.cardMeta}>
-        📍 {attraction.placeName} · {attraction.distanceKm} km away · ⏱ {attraction.visitHours} h · 🕒 {openHours}
-      </p>
-      {attraction.description && <p style={styles.cardText}>{attraction.description}</p>}
-      <div style={styles.cardFooter}>
-        <span style={styles.price}>
-          {attraction.ticketPrice === null ? "Price not listed"
-            : attraction.ticketPrice === 0 ? "Free" : formatPrice(attraction.ticketPrice)}
-        </span>
-        {attraction.rating !== null && <span style={styles.rating}>★ {attraction.rating}</span>}
+      <div style={styles.cardBody}>
+        <h3 style={styles.cardTitle}>{attraction.name}</h3>
+        <p style={styles.cardMeta}>📍 {attraction.placeName} · {attraction.distanceKm} km away</p>
+        {attraction.description && <p style={styles.cardText}>{attraction.description}</p>}
+        <div style={styles.cardFooter}>
+          <span style={styles.price}>
+            {attraction.ticketPrice === null ? "Price not listed"
+              : attraction.ticketPrice === 0 ? "Free entry" : formatPrice(attraction.ticketPrice)}
+          </span>
+          <span style={styles.cardMeta}>⏱ {attraction.visitHours} h · 🕒 {openHours}</span>
+        </div>
       </div>
     </div>
   );
