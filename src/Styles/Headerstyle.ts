@@ -22,6 +22,33 @@ export const header = {
       margin: 0,
       cursor: "pointer"
     },
+    nav: {
+      position: "fixed" as "fixed",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      display: "flex",
+      justifyContent: "space-around" as "space-around",
+      padding: "2vw 0",
+      backgroundColor: Color.White,
+      borderTop: `1px solid ${Color.LightAsh}`,
+      zIndex: 10
+    },
+    navLink: {
+      padding: "2vw 5vw",
+      border: "none",
+      borderRadius: "5vw",
+      background: "none",
+      color: Color.SharpAsh,
+      fontSize: "3.6vw",
+      fontFamily: Font.Default,
+      fontWeight: 600,
+      cursor: "pointer"
+    },
+    navLinkActive: {
+      backgroundColor: Color.Background,
+      color: Color.Primary
+    },
     userBox: {
       display: "flex",
       alignItems: "center" as "center",
@@ -62,6 +89,20 @@ export const header = {
     },
     brand: {
       fontSize: "1.4vw"
+    },
+    nav: {
+      position: "static" as "static",
+      gap: "0.4vw",
+      padding: 0,
+      marginLeft: "3vw",
+      marginRight: "auto",
+      borderTop: "none",
+      backgroundColor: "transparent"
+    },
+    navLink: {
+      padding: "0.45vw 1vw",
+      borderRadius: "0.5vw",
+      fontSize: "0.9vw"
     },
     userBox: {
       gap: "0.8vw"

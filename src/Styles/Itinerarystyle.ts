@@ -4,6 +4,7 @@ export const itinerary = {
   mobile: {
     mainWrapper: {
       minHeight: "100vh",
+      paddingBottom: "16vw",                 // room for the mobile bottom menu
       backgroundColor: Color.Background,
       fontFamily: Font.Default,
       color: Color.DeepBlack
@@ -321,6 +322,45 @@ export const itinerary = {
       fontWeight: "bold" as "bold",
       cursor: "pointer"
     },
+    secondaryButton: {
+      width: "100%",
+      height: "12vw",
+      border: `2px solid ${Color.Primary}`,
+      borderRadius: "2.4vw",
+      backgroundColor: Color.White,
+      color: Color.Primary,
+      fontSize: "3.8vw",
+      fontFamily: Font.Default,
+      fontWeight: "bold" as "bold",
+      cursor: "pointer"
+    },
+    dangerButton: {
+      width: "100%",
+      height: "12vw",
+      border: `1px solid ${Color.Red}`,
+      borderRadius: "2.4vw",
+      backgroundColor: Color.LightRed,
+      color: Color.Red,
+      fontSize: "3.8vw",
+      fontFamily: Font.Default,
+      fontWeight: "bold" as "bold",
+      cursor: "pointer"
+    },
+    buttonDisabled: {
+      opacity: 0.6,
+      cursor: "not-allowed"
+    },
+    savedNote: {
+      margin: "0 0 3vw 0",
+      fontSize: "3.8vw",
+      fontWeight: "bold" as "bold",
+      color: Color.Green
+    },
+    actionError: {
+      margin: "3vw 0 0 0",
+      fontSize: "3.2vw",
+      color: Color.Red
+    },
     message: {
       margin: "10vw 5vw",
       padding: "6vw",
@@ -344,6 +384,9 @@ export const itinerary = {
   },
 
   desktop: {
+    mainWrapper: {
+      paddingBottom: 0
+    },
     cover: {
       padding: "2.5vw 6vw 3vw 6vw"
     },
@@ -537,6 +580,24 @@ export const itinerary = {
       height: "2.8vw",
       borderRadius: "0.5vw",
       fontSize: "0.95vw"
+    },
+    secondaryButton: {
+      height: "2.8vw",
+      borderRadius: "0.5vw",
+      fontSize: "0.92vw"
+    },
+    dangerButton: {
+      height: "2.8vw",
+      borderRadius: "0.5vw",
+      fontSize: "0.92vw"
+    },
+    savedNote: {
+      margin: "0 0 0.8vw 0",
+      fontSize: "0.95vw"
+    },
+    actionError: {
+      margin: "0.8vw 0 0 0",
+      fontSize: "0.82vw"
     },
     message: {
       margin: "3vw 6vw",
