@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { getLoggedInUser } from "../Services/AuthService";
-import { postTripPlan } from "../Services/TripService";
-import { TripPlanModel } from "../Models/TripPlanModel";
+import { deleteTrip, getSavedTrip, postSaveTrip, postTripPlan } from "../Services/TripService";
+import { TripPlanModel, TripPlanRequestModel } from "../Models/TripPlanModel";
 import { Header } from "../Component/Share/Header";
 import { useIsMobile } from "../Component/Share/useIsMobile";
 import { RouteCard } from "../Component/Itinerary/RouteCard";
@@ -11,48 +11,86 @@ import { getErrorMessage, formatDate, formatPrice } from "../Component/Common";
 import { itinerary } from "../Styles/Itinerarystyle";
 import { getComponentStyle } from "../Styles/MergeStyles";
 
-// /itinerary?from=1&to=6&days=2&start=2026-11-10
+// New plan:   /itinerary?from=1&to=6&days=2&start=2026-11-10
+// Saved trip: /trips/5
 export const ItineraryPage: React.FC = () => {
   const navigate = useNavigate();
   const user = getLoggedInUser();
   const styles = getComponentStyle(itinerary, useIsMobile());
   const [params] = useSearchParams();
+  const { id } = useParams();
 
+  const savedTripId = id ? Number(id) : null;
   const [plan, setPlan] = useState<TripPlanModel | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [savedId, setSavedId] = useState<number | null>(savedTripId);
+  const [busy, setBusy] = useState<boolean>(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
-  const fromPlaceId = Number(params.get("from"));
-  const toPlaceId = Number(params.get("to"));
-  const days = Number(params.get("days") ?? 2);
-  const startDate = params.get("start") ?? new Date().toISOString().slice(0, 10);
+  const request: TripPlanRequestModel = {
+    fromPlaceId: Number(params.get("from")),
+    toPlaceId: Number(params.get("to")),
+    days: Number(params.get("days") ?? 2),
+    startDate: params.get("start") ?? new Date().toISOString().slice(0, 10)
+  };
 
   useEffect(() => {
-    if (!fromPlaceId || !toPlaceId) {
+    setPlan(null);
+    setError(null);
+    setSavedId(savedTripId);
+
+    if (!savedTripId && (!request.fromPlaceId || !request.toPlaceId)) {
       setError("Missing trip details. Please search again from the home page.");
       return;
     }
-    setPlan(null);
-    setError(null);
-    postTripPlan({ fromPlaceId, toPlaceId, days, startDate })
+
+    const load = savedTripId ? getSavedTrip(savedTripId) : postTripPlan(request);
+    load
       .then((result) => {
         setPlan(result);
         document.title = `${result.to.name} trip - Travel Planner`;
       })
-      .catch((err) => setError(getErrorMessage(err, "Could not plan this trip. Please try again.")));
-  }, [fromPlaceId, toPlaceId, days, startDate]);
+      .catch((err) => setError(getErrorMessage(err, "Could not load this trip. Please try again.")));
+    // The request values come from the URL, so the URL is what we watch
+  }, [savedTripId, params.toString()]);
 
   if (!user) {
     return <Navigate to="/login" replace />;
   }
+
+  const handleSave = () => {
+    setBusy(true);
+    setActionError(null);
+    postSaveTrip(request)
+      .then((saved) => setSavedId(saved.id))
+      .catch((err) => setActionError(getErrorMessage(err, "Could not save this trip. Please try again.")))
+      .finally(() => setBusy(false));
+  };
+
+  const handleDelete = () => {
+    if (!savedId || !window.confirm("Delete this trip from My Trips?")) return;
+    setBusy(true);
+    setActionError(null);
+    deleteTrip(savedId)
+      .then(() => navigate("/trips"))
+      .catch((err) => {
+        setActionError(getErrorMessage(err, "Could not delete this trip. Please try again."));
+        setBusy(false);
+      });
+  };
 
   if (error || !plan) {
     return (
       <div style={styles.mainWrapper}>
         <Header user={user} />
         <div style={{ ...styles.message, ...(error ? styles.messageError : {}) }}>
-          {error ?? "✨ Planning your trip..."}
+          {error ?? (savedTripId ? "Opening your trip..." : "✨ Planning your trip...")}
           {error && (
-            <p><button style={styles.primaryButton} onClick={() => navigate("/home")}>← Back to search</button></p>
+            <p>
+              <button style={styles.primaryButton} onClick={() => navigate(savedTripId ? "/trips" : "/home")}>
+                {savedTripId ? "← Back to My Trips" : "← Back to search"}
+              </button>
+            </p>
           )}
         </div>
       </div>
@@ -75,7 +113,9 @@ export const ItineraryPage: React.FC = () => {
       <Header user={user} />
 
       <section style={coverStyle}>
-        <button style={styles.backLink} onClick={() => navigate("/home")}>← Change search</button>
+        {savedTripId
+          ? <button style={styles.backLink} onClick={() => navigate("/trips")}>← My Trips</button>
+          : <button style={styles.backLink} onClick={() => navigate("/home")}>← Change search</button>}
         <h2 style={styles.coverTitle}>{plan.from.name} → {plan.to.name}</h2>
         <p style={styles.coverSubTitle}>
           {plan.numberOfDays} {plan.numberOfDays === 1 ? "day" : "days"} · {formatDate(plan.startDate)}
@@ -103,6 +143,22 @@ export const ItineraryPage: React.FC = () => {
         </div>
 
         <aside style={styles.sideColumn}>
+          <div style={styles.card}>
+            {savedId ? (
+              <>
+                <p style={styles.savedNote}>✓ Saved in My Trips</p>
+                {savedTripId
+                  ? <button style={styles.dangerButton} disabled={busy} onClick={handleDelete}>🗑️ Delete trip</button>
+                  : <button style={styles.secondaryButton} onClick={() => navigate(`/trips/${savedId}`)}>View in My Trips →</button>}
+              </>
+            ) : (
+              <button style={{ ...styles.primaryButton, ...(busy ? styles.buttonDisabled : {}) }} disabled={busy} onClick={handleSave}>
+                {busy ? "Saving..." : "💾 Save to My Trips"}
+              </button>
+            )}
+            {actionError && <p style={styles.actionError}>{actionError}</p>}
+          </div>
+
           <RouteCard styles={styles} title="🧭 Getting there" route={plan.outbound} car={plan.car} />
           <RouteCard styles={styles} title="🏠 Getting home" route={plan.return} car={plan.car} />
 
@@ -115,7 +171,7 @@ export const ItineraryPage: React.FC = () => {
             <p style={styles.costNote}>Rough guide per person in LKR. Local tuk-tuks, food and safari jeeps are not included.</p>
           </div>
 
-          <button style={styles.primaryButton} onClick={() => window.print()}>🖨️ Print or save as PDF</button>
+          <button style={styles.secondaryButton} onClick={() => window.print()}>🖨️ Print or save as PDF</button>
         </aside>
       </div>
 
