@@ -4,5 +4,6 @@ export interface UserModel {
   fullName: string;
   email: string;
   phone: string | null;
+  role?: "User" | "Admin";      // missing for logins saved before roles existed
   createdAt: string;
 }

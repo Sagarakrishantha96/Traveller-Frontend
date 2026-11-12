@@ -27,6 +27,17 @@ export const header = {
       alignItems: "center" as "center",
       gap: "3vw"
     },
+    adminButton: {
+      padding: "2vw 3vw",
+      border: "none",
+      borderRadius: "2vw",
+      backgroundColor: "#264653",
+      color: Color.White,
+      fontSize: "3.2vw",
+      fontFamily: Font.Default,
+      fontWeight: 600,
+      cursor: "pointer"
+    },
     avatar: {
       width: "8vw",
       height: "8vw",
@@ -65,6 +76,11 @@ export const header = {
     },
     userBox: {
       gap: "0.8vw"
+    },
+    adminButton: {
+      padding: "0.45vw 0.9vw",
+      borderRadius: "0.5vw",
+      fontSize: "0.82vw"
     },
     avatar: {
       width: "2.2vw",
