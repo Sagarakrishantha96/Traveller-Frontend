@@ -4,6 +4,7 @@ export const home = {
   mobile: {
     mainWrapper: {
       minHeight: "100vh",
+      paddingBottom: "16vw",                 // room for the mobile bottom menu
       backgroundColor: Color.Background,
       fontFamily: Font.Default,
       color: Color.DeepBlack
@@ -326,6 +327,9 @@ export const home = {
   },
 
   desktop: {
+    mainWrapper: {
+      paddingBottom: 0
+    },
     hero: {
       padding: "5vw 6vw 7.5vw 6vw"
     },
