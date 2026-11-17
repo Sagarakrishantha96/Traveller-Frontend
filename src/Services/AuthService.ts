@@ -36,15 +36,30 @@ export async function postLoginRequest(loginModel: LoginModel) {
 // Keep the login token and user in the browser, so the user stays logged in
 export function saveLogin(login: LoginResponseModel) {
     localStorage.setItem("token", login.token);
+    localStorage.setItem("tokenExpiresAt", login.expiresAt);
     localStorage.setItem("user", JSON.stringify(login.user));
 }
 
+// The logged-in user, or null if not logged in or the login has expired
 export function getLoggedInUser(): UserModel | null {
     const user = localStorage.getItem("user");
-    return localStorage.getItem("token") && user ? JSON.parse(user) : null;
+    if (!localStorage.getItem("token") || !user) return null;
+
+    const expiresAt = localStorage.getItem("tokenExpiresAt");
+    if (expiresAt && new Date(expiresAt).getTime() <= Date.now()) {
+        logout();
+        return null;
+    }
+
+    return JSON.parse(user);
+}
+
+export function getToken(): string | null {
+    return getLoggedInUser() ? localStorage.getItem("token") : null;
 }
 
 export function logout() {
     localStorage.removeItem("token");
+    localStorage.removeItem("tokenExpiresAt");
     localStorage.removeItem("user");
 }
